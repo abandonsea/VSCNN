@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Oct 07 19:02 2021
+Created on Tue Oct 26 13:55 2021
 
-@author: Pedro Vieira @description: Settings for the DFFN training and testing
+@author: Pedro Vieira @description: Settings for the VSCNN training and testing
 """
 
 import shutil
@@ -11,7 +11,7 @@ import os
 import yaml
 
 
-class DFFNConfig:
+class VSCNNConfig:
     def __init__(self, filename='config.yaml', test=False):
         # Load config
         with open(filename, "r") as file:
