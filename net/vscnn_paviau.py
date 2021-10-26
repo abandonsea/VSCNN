@@ -38,3 +38,10 @@ class VSCNN(nn.Module):
         out = out.view((batch_size, -1))
         out = self.classifier(out)
         return out
+
+
+# PaviaU
+# net = VSCNN(10, 9)
+# input = torch.rand((2, 1, 10, 13, 13))
+# out = net(input)
+# print(out.shape)
