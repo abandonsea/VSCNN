@@ -3,7 +3,8 @@
 """
 Created on Tue Oct 26 13:55 2021
 
-@author: Pedro Vieira @description: Settings for the VSCNN training and testing
+@author: Pedro Vieira
+@description: Settings for the VSCNN training and testing
 """
 
 import shutil
