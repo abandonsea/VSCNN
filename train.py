@@ -211,13 +211,11 @@ def train():
 # NUM_WORKERS = 8
 # SEED = 971104
 # torch.manual_seed(SEED)
-# DEVICE = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
 # ROOT = None
 # N_SELECT = 4
 #
 #
 # def original_main(datasetName, n_sample_per_class, run):
-#     # 加载数据和标签
 #     info = DatasetInfo.info[datasetName]
 #     data_path = "./data/{}/{}.mat".format(datasetName, datasetName)
 #     label_path = './trainTestSplit/{}/sample{}_run{}.mat'.format(datasetName, n_sample_per_class, run)
@@ -227,12 +225,10 @@ def train():
 #     isExists(label_path)
 #     trainLabel, testLabel = loadLabel(label_path)
 #     res = torch.zeros((3, EPOCHS))
-#     # 数据转换
 #     data, trainLabel, testLabel = data.astype(np.float32), trainLabel.astype(np.int), testLabel.astype(np.int)
 #     # 数据预处理
 #     data = preprocess(data, info['n_component'])
 #     bands = data.shape[2]
-#     # 挑选有价值的样本
 #     s = int(np.sum(trainLabel != 0))
 #     iteration = int(np.math.ceil((0.8 * s - 90) / N_SELECT))
 #     trainLabel = select_valuable_samples(data, trainLabel, iteration, N_SELECT)
@@ -264,34 +260,6 @@ def train():
 #     savemat(os.path.join(ROOT, 'res.mat'), {'trainLoss':tmp[0], 'evalLoss':tmp[1], 'acc':tmp[2]})
 #     return res
 
-
-# if __name__ == '__main__':
-#     parser = argparse.ArgumentParser(description='train VSCNN')
-#     parser.add_argument('--name', type=str, default='Salinas',
-#                         help='The name of dataset')
-#     parser.add_argument('--epoch', type=int, default=1,
-#                         help='模型的训练次数')
-#     parser.add_argument('--lr', type=float, default=1e-3,
-#                         help='learning rate')
-#
-#     args = parser.parse_args()
-#     EPOCHS = args.epoch
-#     datasetName = args.name
-#     LR = args.lr
-#     print('*'*5 + datasetName + '*'*5)
-#     for i, num in enumerate(SAMPLE_PER_CLASS):
-#         print('*' * 5 + 'SAMPLE_PER_CLASS:{}'.format(num) + '*' * 5)
-#         res = torch.zeros((RUN, 3, EPOCHS))
-#         for r in range(RUN):
-#             print('*' * 5 + 'run:{}'.format(r) + '*' * 5)
-#             ROOT = 'vscnn/{}/{}/{}'.format(datasetName, num, r)
-#             if not os.path.isdir(ROOT):
-#                 os.makedirs(ROOT)
-#             res[r] = main(datasetName, num, r)
-#         mean = torch.mean(res, dim=0)  # [3, EPOCHS]
-#         viz.line(mean.T, list(range(EPOCHS)), win='SAMPLE_PER_CLASS_{}'.format(num), opts=dict(title='SAMPLE_PER_CLASS_{}'.format(num),
-#                                                                                                legend=['train loss', 'test loss', 'acc']))
-#     print('*'*5 + 'FINISH' + '*'*5)
 
 # Main function
 def main():
