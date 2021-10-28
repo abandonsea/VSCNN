@@ -162,6 +162,46 @@ class HSIData:
         io.savemat(sample_file, {'train_gt': train_gt, 'test_gt': test_gt, 'val_gt': val_gt})
 
 
+# Select most valuable samples for training
+def select_valuable_samples(data, gt, num_select, init_sample_size=5, seed=0):
+    # Calculate number of iterations
+    num_samples = int(np.sum(gt != 0))
+    iteration = int(np.math.ceil((0.8 * num_samples - 90) / num_select))  # TODO: Why this equation?
+
+    # Get indices for the train and pool sets
+    train_set, pool_set = HSIData.split_ground_truth(gt, 1.0, init_sample_size)  # 1.0 param will be ignored
+    train_indices = list(zip(*np.nonzero(train_set > 0)))
+    pool_indices = list(zip(*np.nonzero(pool_set > 0)))
+
+    # Initialize and SVM
+    net = svm.SVC(probability=True, random_state=seed)
+
+    # Select samples from pool set
+    for i in range(iteration):
+        x = data[tuple(zip(*train_indices))]
+        y = gt[tuple(zip(*train_indices))]
+        net.fit(x, y)
+
+        # Calculate BvSB
+        x_hat = data[tuple(zip(*pool_indices))]
+        prob = net.predict_proba(x_hat)  # prob:[batch_size, nc]
+        first_second = np.sort(prob, axis=-1)
+        bvsb = first_second[:, -1] - first_second[:, -2]
+
+        # Get candidates
+        indices = np.argsort(bvsb)
+        candidates = indices[:num_select]
+        candidates.sort()
+        candidates = candidates[::-1]
+        for j in candidates:
+            train_indices.append(pool_indices[j])
+            pool_indices.pop(j)
+
+    selected_train_labels = np.zeros_like(gt, dtype=np.int)
+    selected_train_labels[tuple(zip(*train_indices))] = gt[tuple(zip(*train_indices))]
+    return selected_train_labels
+
+
 # Load a checkpoint
 def load_checkpoint(checkpoint_folder, file):
     # Check whether to load latest checkpoint
@@ -213,56 +253,3 @@ def save_results(filename, report, run, epoch=-1, validation=False):
         file.write('\n')
         file.write('#' * 70)
         file.write('\n\n')
-
-
-#########################################################################
-# ORIGINAL IMPLEMENTATION UTILS.PY
-
-
-def select_valuable_sample(data, gt, iteration, n_select, seed=971104):
-    random.seed(971104)
-    init_sample_size = 5
-    train_indices = []
-    pool_indices = []
-    for i in np.unique(gt):
-        if i == 0:
-            continue
-        indices = list(zip(*np.nonzero(gt == i)))
-        random.shuffle(indices)
-        train_indices += indices[:init_sample_size]
-        pool_indices += indices[init_sample_size:]
-    train_indices = train_indices
-    pool_indices = pool_indices
-    net = svm.SVC(probability=True, random_state=seed)
-    for i in range(iteration):
-        x = data[tuple(zip(*train_indices))]
-        y = gt[tuple(zip(*train_indices))]
-        net.fit(x, y)
-        x_hat = data[tuple(zip(*pool_indices))]
-        prob = net.predict_proba(x_hat)  # prob:[batch_size, nc]
-        first_second = np.sort(prob, axis=-1)
-        bvsb = first_second[:, -1] - first_second[:, -2]
-        indices = np.argsort(bvsb)
-        candidates = indices[:n_select]
-        candidates.sort()
-        candidates = candidates[::-1]
-        for j in candidates:
-            train_indices.append(pool_indices[j])
-            pool_indices.pop(j)
-
-    ans = np.zeros_like(gt, dtype=np.int)
-    ans[tuple(zip(*train_indices))] = gt[tuple(zip(*train_indices))]
-    return ans
-
-
-# def weight_init(m):
-#     if isinstance(m, nn.Linear):
-#         init.uniform_(m.weight, -1, 1)
-#         init.constant_(m.bias, 0)
-#     elif isinstance(m, nn.Conv2d):
-#         init.uniform_(m.weight, -1, 1)
-#         init.constant_(m.bias, 0)
-#     elif isinstance(m, nn.BatchNorm1d):
-#         init.constant_(m.weight, 1)
-#         init.constant_(m.bias, 0)
-
