@@ -1,6 +1,14 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Oct 28 17:39 2021
+
+@author: Pedro Vieira
+@description: Implements the train function for the VSCNN network published in https://github.com/ShuGuoJ/3DVSCNN
+"""
+
 import torch
-from torch import nn, optim
-import numpy as np
+from torch import nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
