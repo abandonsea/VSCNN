@@ -10,8 +10,8 @@ generate_samples: True  # Whether the samples should be generated (False to load
 max_samples: 300  # max training samples per class (null for no limit)
 
 # Hyper parameters
-train_batch_size: 100  # Batch size for every train iteration
-test_batch_size: 20  # Batch size for every test iteration
+train_batch_size: 10  # Batch size for every train iteration
+test_batch_size: 10  # Batch size for every test iteration
 sample_size: 13  # Window size for every sample/pixel input
 sample_bands: 10  # Number of bands after applying PCA
 num_runs: 1  # The amount of time the whole experiment should run
