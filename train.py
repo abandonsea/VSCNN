@@ -16,6 +16,7 @@ from utils.config import VSCNNConfig
 from utils.tools import *
 from utils.dataset import VSCNNDataset
 from net.vscnn_paviau import VSCNN
+from test import test_model
 
 # Import tensorboard
 from torch.utils.tensorboard import SummaryWriter
