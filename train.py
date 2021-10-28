@@ -1,5 +1,5 @@
 import torch
-from torch import nn
+from torch import nn, optim
 import numpy as np
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -59,6 +59,9 @@ def train():
             HSIData.save_samples(train_gt, test_gt, val_gt, cfg.split_folder, cfg.train_split, cfg.val_split, run)
         else:
             train_gt, _, val_gt = HSIData.load_samples(cfg.split_folder, cfg.train_split, cfg.val_split, run)
+
+        # Select most valuable samples
+        train_gt = select_valuable_samples(data.image, train_gt, cfg.svm_num_select)
 
         # Create train and test dataset objects
         train_dataset = VSCNNDataset(data.image, train_gt, cfg.sample_size, data_augmentation=True)
@@ -201,11 +204,11 @@ def train():
 # SEED = 971104
 # torch.manual_seed(SEED)
 # DEVICE = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
-# viz = Visdom()
 # ROOT = None
 # N_SELECT = 4
 #
-# def main(datasetName, n_sample_per_class, run):
+#
+# def original_main(datasetName, n_sample_per_class, run):
 #     # 加载数据和标签
 #     info = DatasetInfo.info[datasetName]
 #     data_path = "./data/{}/{}.mat".format(datasetName, datasetName)
@@ -224,15 +227,15 @@ def train():
 #     # 挑选有价值的样本
 #     s = int(np.sum(trainLabel != 0))
 #     iteration = int(np.math.ceil((0.8 * s - 90) / N_SELECT))
-#     trainLabel = select_valuable_sample(data, trainLabel, iteration, N_SELECT)
+#     trainLabel = select_valuable_samples(data, trainLabel, iteration, N_SELECT)
 #
 #     nc = int(np.max(trainLabel))
-#     trainDataset = HSIDataset(data, trainLabel, patchsz=info['patchsz'])
-#     testDataset = HSIDataset(data, testLabel, patchsz=info['patchsz'])
+#     trainDataset = VSCNNDataset(data, trainLabel, patchsz=info['patchsz'])
+#     testDataset = VSCNNDataset(data, testLabel, patchsz=info['patchsz'])
 #     trainLoader = DataLoader(trainDataset, batch_size=BATCHSZ, shuffle=True, num_workers=NUM_WORKERS)
 #     testLoader = DataLoader(testDataset, batch_size=128, shuffle=True, num_workers=NUM_WORKERS)
 #
-#     model = VSCNN_KSC(bands, nc) if datasetName == 'KSC' else VSCNN_PaviaU(bands, nc)
+#     model = VSCNN(bands, nc)
 #     # model.apply(weight_init)
 #     criterion = nn.CrossEntropyLoss()
 #     optimizer = optim.Adam(model.parameters(), lr=LR)
@@ -252,8 +255,8 @@ def train():
 #     tmp = res.numpy()
 #     savemat(os.path.join(ROOT, 'res.mat'), {'trainLoss':tmp[0], 'evalLoss':tmp[1], 'acc':tmp[2]})
 #     return res
-#
-#
+
+
 # if __name__ == '__main__':
 #     parser = argparse.ArgumentParser(description='train VSCNN')
 #     parser.add_argument('--name', type=str, default='Salinas',
