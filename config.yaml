@@ -21,6 +21,8 @@ momentum: 0.9  # Momentum of optimizer
 weight_decay: 1e-4  # The weight decay for the optimizer
 gamma: 0.8  # Gamma parameter for the lr scheduler
 scheduler_step: 100  # Step size for the lr scheduler
+svm_num_select: 4  # Number of selected samples for the SVM training
+svm_init_sample_size: 5  # Initial sample size for the SVM training
 
 # Other options
 test_best_models: True  # Whether to test the best model of each run

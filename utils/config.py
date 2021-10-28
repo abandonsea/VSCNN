@@ -41,6 +41,8 @@ class VSCNNConfig:
             self.weight_decay = float(cfg['weight_decay'])
             self.gamma = cfg['gamma']
             self.scheduler_step = cfg['scheduler_step']
+            self.svm_num_select = cfg['svm_num_select']
+            self.svm_init_sample_size = cfg['svm_init_sample_size']
 
             # Other options
             self.test_best_models = cfg['test_best_models']
