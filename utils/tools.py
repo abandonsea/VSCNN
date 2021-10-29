@@ -13,6 +13,7 @@ from scipy import io
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn import svm
+from tqdm import tqdm
 import random
 import os
 import glob
@@ -70,7 +71,7 @@ class HSIData:
         self.ignored_labels = list(set(ignored_labels))
 
         img = np.asarray(img, dtype='float32')
-        self.image, _, _, _ = self.apply_dimension_reduction(img, num_bands)
+        self.image, _, _ = self.apply_dimension_reduction(img, num_bands)
 
     @staticmethod
     def apply_dimension_reduction(image, num_bands=10):
@@ -88,14 +89,9 @@ class HSIData:
         pca.fit(norm1_img)
         pca_img = pca.transform(norm1_img)
 
-        # Normalize data after applying PCA. Range [-1, 1] (Is it really necessary?)
-        sca2 = StandardScaler()
-        sca2.fit(pca_img)
-        norm2_img = sca2.transform(pca_img)
+        out_img = np.reshape(pca_img, (image_height, image_width, num_bands))
 
-        out_img = np.reshape(norm2_img, (image_height, image_width, num_bands))
-
-        return out_img, pca, sca1, sca2  # Returning transformers for future usage
+        return out_img, pca, sca1  # Returning transformers for future usage
 
     # Split ground-truth pixels into train, test, val
     def sample_dataset(self, train_size=0.8, val_size=0.1, max_train_samples=None):
@@ -166,7 +162,7 @@ class HSIData:
 def select_valuable_samples(data, gt, num_select, init_sample_size=5, seed=0):
     # Calculate number of iterations
     num_samples = int(np.sum(gt != 0))
-    iteration = int(np.math.ceil((0.8 * num_samples - 90) / num_select))  # TODO: Why this equation?
+    num_iterations = int(np.math.ceil((0.8 * num_samples - 90) / num_select))  # TODO: Why this equation?
 
     # Get indices for the train and pool sets
     train_set, pool_set = HSIData.split_ground_truth(gt, 1.0, init_sample_size)  # 1.0 param will be ignored
@@ -177,7 +173,8 @@ def select_valuable_samples(data, gt, num_select, init_sample_size=5, seed=0):
     net = svm.SVC(probability=True, random_state=seed)
 
     # Select samples from pool set
-    for i in range(iteration):
+    for i in tqdm(range(num_iterations), total=num_iterations):
+        # for i in range(num_iterations):
         x = data[tuple(zip(*train_indices))]
         y = gt[tuple(zip(*train_indices))]
         net.fit(x, y)
