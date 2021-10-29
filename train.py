@@ -70,6 +70,7 @@ def train():
             train_gt, _, val_gt = HSIData.load_samples(cfg.split_folder, cfg.train_split, cfg.val_split, run)
 
         # Select most valuable samples
+        print(f'SELECTING VALUABLE SAMPLES {run + 1}/{cfg.num_runs}')
         train_gt = select_valuable_samples(data.image, train_gt, cfg.svm_num_select)
 
         # Create train and test dataset objects
