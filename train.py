@@ -116,7 +116,7 @@ def train():
             # Run iterations
             for i, (images, labels) in tqdm(enumerate(train_loader), total=len(train_loader)):
                 # image should have size 23x23x5
-                images = images.to(device)
+                images = images.unsqueeze(1).to(device)
                 labels = labels.to(device)
 
                 # Forward pass
@@ -155,7 +155,7 @@ def train():
             if cfg.val_split > 0:
                 print("STARTING VALIDATION {}/{}".format(epoch + 1, cfg.num_epochs))
                 model.eval()
-                report = test_model(model, val_loader, writer)
+                report = test_model(model, val_loader)
                 model.train()
 
                 # Save validation results

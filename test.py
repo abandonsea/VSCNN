@@ -102,7 +102,7 @@ def test_model(model, loader):
         for i, (images, labels) in tqdm(enumerate(loader), total=len(loader)):
             # for images, labels in loader:
             # Get input and compute model output
-            images = images.to(device)
+            images = images.unsqueeze(1).to(device)
             labels = labels.to(device)
             outputs = model(images)
 
