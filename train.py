@@ -71,7 +71,8 @@ def train():
 
         # Select most valuable samples
         print(f'SELECTING VALUABLE SAMPLES {run + 1}/{cfg.num_runs}')
-        train_gt = select_valuable_samples(data.image, train_gt, cfg.svm_num_select)
+        train_gt = select_valuable_samples(data.image, train_gt, cfg.svm_num_select, cfg.svm_train_fraction,
+                                           cfg.svm_init_sample_size)
 
         # Create train and test dataset objects
         train_dataset = VSCNNDataset(data.image, train_gt, cfg.sample_size, data_augmentation=True)
@@ -115,7 +116,7 @@ def train():
 
             # Run iterations
             for i, (images, labels) in tqdm(enumerate(train_loader), total=len(train_loader)):
-                # image should have size 23x23x5
+                # images should have size [batch_size, 1, 10, 13, 13]
                 images = images.unsqueeze(1).to(device)
                 labels = labels.to(device)
 
