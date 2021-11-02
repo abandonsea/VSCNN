@@ -82,7 +82,7 @@ def train():
         val_loader = DataLoader(val_dataset, batch_size=cfg.test_batch_size, shuffle=False)
 
         # Setup model, optimizer, loss and scheduler
-        model = nn.DataParallel(VSCNN(cfg.sample_bands, len(data.label_values)))
+        model = nn.DataParallel(VSCNN(cfg.sample_bands, data.num_classes))
         criterion = nn.CrossEntropyLoss()
         optimizer = torch.optim.SGD(model.parameters(), lr=cfg.learning_rate, momentum=cfg.momentum,
                                     weight_decay=cfg.weight_decay)
@@ -150,6 +150,10 @@ def train():
                     if writer is not None:
                         writer.add_scalar('training loss', avg_loss, epoch * total_steps + i)
                         writer.add_scalar('accuracy', accuracy, epoch * total_steps + i)
+
+            # Reset running loss and correct
+            running_loss = 0.0
+            running_correct = 0
 
             # Run validation
             if cfg.val_split > 0:
@@ -228,7 +232,6 @@ def train():
 #     trainLabel, testLabel = loadLabel(label_path)
 #     res = torch.zeros((3, EPOCHS))
 #     data, trainLabel, testLabel = data.astype(np.float32), trainLabel.astype(np.int), testLabel.astype(np.int)
-#     # 数据预处理
 #     data = preprocess(data, info['n_component'])
 #     bands = data.shape[2]
 #     s = int(np.sum(trainLabel != 0))
