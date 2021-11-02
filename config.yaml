@@ -1,6 +1,6 @@
 # Dataset settings
 dataset: 'PaviaU'  # PaviaU; KSC; Salinas
-experiment: 'prototype_02'  # Name for the experiment (will be used to load all information)
+experiment: 'server_01'  # Name for the experiment (will be used to load all information)
 data_folder: './datasets/'  # Dataset folder
 exec_folder: './experiments/'  # Folder where to keep all the experiment data
 split_folder: 'data_split/'  # Where to store dataset splits
@@ -10,18 +10,18 @@ generate_samples: True  # Whether the samples should be generated (False to load
 max_samples: null  # max training samples per class (null for no limit)
 
 # Hyper parameters
-train_batch_size: 20  # Batch size for every train iteration
-test_batch_size: 128  # Batch size for every test iteration
+train_batch_size: 200  # Batch size for every train iteration
+test_batch_size: 100  # Batch size for every test iteration
 sample_size: 13  # Window size for every sample/pixel input
 sample_bands: 10  # Number of bands after applying PCA
-num_runs: 1  # The amount of time the whole experiment should run
-num_epochs: 10  # Number of epochs per run
-learning_rate: 0.1  # Initial learning rate
+num_runs: 10  # The amount of time the whole experiment should run
+num_epochs: 50  # Number of epochs per run
+learning_rate: 0.01  # Initial learning rate
 momentum: 0.9  # Momentum of optimizer
 weight_decay: 1e-4  # The weight decay for the optimizer
 gamma: 0.8  # Gamma parameter for the lr scheduler
-scheduler_step: 100  # Step size for the lr scheduler
-svm_num_select: 40  # Number of selected samples for the SVM training
+scheduler_step: 1000  # Step size for the lr scheduler
+svm_num_select: 100  # Number of selected samples for the SVM training
 svm_init_sample_size: 5  # Initial sample size for the SVM training
 
 # Other options
