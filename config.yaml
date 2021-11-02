@@ -23,6 +23,7 @@ gamma: 0.8  # Gamma parameter for the lr scheduler
 scheduler_step: 1000  # Step size for the lr scheduler
 svm_num_select: 200  # Number of selected samples for the SVM training
 svm_init_sample_size: 5  # Initial sample size for the SVM training
+svm_train_fraction: 0.7  # Fraction to be used from the original train set
 
 # Other options
 test_best_models: True  # Whether to test the best model of each run

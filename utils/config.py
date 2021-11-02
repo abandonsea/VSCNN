@@ -43,6 +43,7 @@ class VSCNNConfig:
             self.scheduler_step = cfg['scheduler_step']
             self.svm_num_select = cfg['svm_num_select']
             self.svm_init_sample_size = cfg['svm_init_sample_size']
+            self.svm_train_fraction = cfg["svm_train_fraction"]
 
             # Other options
             self.test_best_models = cfg['test_best_models']

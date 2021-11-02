@@ -160,10 +160,12 @@ class HSIData:
 
 
 # Select most valuable samples for training
-def select_valuable_samples(data, gt, num_select, init_sample_size=5, seed=0):
+def select_valuable_samples(data, gt, num_select, train_fraction=0.7, init_sample_size=5, seed=0):
     # Calculate number of iterations
     num_samples = int(np.sum(gt != 0))
-    num_iterations = int(np.math.ceil(0.75 * num_samples / num_select))  # TODO: Why this equation?
+
+    # Define number of iterations
+    num_iterations = int(np.math.ceil(train_fraction * num_samples / num_select))
 
     # Get indices for the train and pool sets
     train_set, pool_set = HSIData.split_ground_truth(gt, 1.0, init_sample_size)  # 1.0 param will be ignored
