@@ -209,64 +209,6 @@ def train():
         writer.close()
 
 
-# isExists = lambda path: os.path.exists(path)
-# SAMPLE_PER_CLASS = [10, 50, 100]
-# RUN = 10
-# EPOCHS = 10
-# LR = 1e-1
-# BATCHSZ = 10
-# NUM_WORKERS = 8
-# SEED = 971104
-# torch.manual_seed(SEED)
-# ROOT = None
-# N_SELECT = 4
-#
-#
-# def original_main(datasetName, n_sample_per_class, run):
-#     info = DatasetInfo.info[datasetName]
-#     data_path = "./data/{}/{}.mat".format(datasetName, datasetName)
-#     label_path = './trainTestSplit/{}/sample{}_run{}.mat'.format(datasetName, n_sample_per_class, run)
-#     isExists(data_path)
-#     data = loadmat(data_path)[info['data_key']]
-#
-#     isExists(label_path)
-#     trainLabel, testLabel = loadLabel(label_path)
-#     res = torch.zeros((3, EPOCHS))
-#     data, trainLabel, testLabel = data.astype(np.float32), trainLabel.astype(np.int), testLabel.astype(np.int)
-#     data = preprocess(data, info['n_component'])
-#     bands = data.shape[2]
-#     s = int(np.sum(trainLabel != 0))
-#     iteration = int(np.math.ceil((0.8 * s - 90) / N_SELECT))
-#     trainLabel = select_valuable_samples(data, trainLabel, iteration, N_SELECT)
-#
-#     nc = int(np.max(trainLabel))
-#     trainDataset = VSCNNDataset(data, trainLabel, patchsz=info['patchsz'])
-#     testDataset = VSCNNDataset(data, testLabel, patchsz=info['patchsz'])
-#     trainLoader = DataLoader(trainDataset, batch_size=BATCHSZ, shuffle=True, num_workers=NUM_WORKERS)
-#     testLoader = DataLoader(testDataset, batch_size=128, shuffle=True, num_workers=NUM_WORKERS)
-#
-#     model = VSCNN(bands, nc)
-#     # model.apply(weight_init)
-#     criterion = nn.CrossEntropyLoss()
-#     optimizer = optim.Adam(model.parameters(), lr=LR)
-#     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.8)
-#
-#     for epoch in range(EPOCHS):
-#         print('*'*5 + 'Epoch:{}'.format(epoch) + '*'*5)
-#         model, trainLoss = train(model, criterion=criterion, optimizer=optimizer, dataLoader=trainLoader)
-#         acc, evalLoss = test(model, criterion=criterion, dataLoader=testLoader)
-#         print('epoch:{} trainLoss:{:.8f} evalLoss:{:.8f} acc:{:.4f}'.format(epoch, trainLoss, evalLoss, acc))
-#         print('*'*18)
-#         res[0][epoch], res[1][epoch], res[2][epoch] = trainLoss, evalLoss, acc
-#         if epoch%5==0:
-#             torch.save(model.state_dict(), os.path.join(ROOT, 'vscnn_sample{}_run{}_epoch{}.pkl'.format(n_sample_per_class,
-#                                                                                                        run, epoch)))
-#         scheduler.step()
-#     tmp = res.numpy()
-#     savemat(os.path.join(ROOT, 'res.mat'), {'trainLoss':tmp[0], 'evalLoss':tmp[1], 'acc':tmp[2]})
-#     return res
-
-
 # Main function
 def main():
     train()
