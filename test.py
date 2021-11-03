@@ -73,10 +73,11 @@ def test():
         _, test_gt, _ = HSIData.load_samples(cfg.split_folder, cfg.train_split, cfg.val_split, run)
         test_dataset = VSCNNDataset(data, test_gt, cfg.sample_size, data_augmentation=False)
         test_loader = DataLoader(test_dataset, batch_size=cfg.test_batch_size, shuffle=False)
+        num_classes = len(np.unique(test_gt)) - 1  # Remove one for the "undefined" class
 
         # Load model
         model_file = f'{cfg.exec_folder}runs/vscnn_{test_best}model_run_{run}.pth'
-        model = nn.DataParallel(VSCNN(cfg.sample_bands, 10))  # Values are going to be overwritten
+        model = nn.DataParallel(VSCNN(cfg.sample_bands, num_classes))  # Values are going to be overwritten
         model.load_state_dict(torch.load(model_file))
         model.eval()
 
