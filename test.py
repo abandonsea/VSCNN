@@ -75,7 +75,7 @@ def test():
         test_loader = DataLoader(test_dataset, batch_size=cfg.test_batch_size, shuffle=False)
 
         # Load model
-        model_file = f'{cfg.exec_folder}runs/dffn_{test_best}model_run_{run}.pth'
+        model_file = f'{cfg.exec_folder}runs/vscnn_{test_best}model_run_{run}.pth'
         model = nn.DataParallel(VSCNN(cfg.sample_bands, 10))  # Values are going to be overwritten
         model.load_state_dict(torch.load(model_file))
         model.eval()
