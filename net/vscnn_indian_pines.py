@@ -13,7 +13,7 @@ from torch import nn
 
 class VSCNN(nn.Module):
     def __init__(self, bands, num_classes):
-        # image_patch: 13x13
+        # image_patch: 30x13x13
         super().__init__()
         self.feature = nn.Sequential(
             nn.Conv3d(1, 20, (9, 3, 3)),
