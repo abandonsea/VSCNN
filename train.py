@@ -15,7 +15,7 @@ from tqdm import tqdm
 from utils.config import VSCNNConfig
 from utils.tools import *
 from utils.dataset import VSCNNDataset
-from net.vscnn_indian_pines import VSCNN
+from net.vscnn_paviau import VSCNN
 from test import test_model
 
 # Import tensorboard

@@ -1,6 +1,6 @@
 # Dataset settings
-dataset: 'IndianPines'  # PaviaU; IndianPines; Salinas
-experiment: 'indian_pines_01'  # Name for the experiment (will be used to load all information)
+dataset: 'PaviaU'  # PaviaU; IndianPines; Salinas
+experiment: 'paviau_01'  # Name for the experiment (will be used to load all information)
 data_folder: './datasets/'  # Dataset folder
 exec_folder: './experiments/'  # Folder where to keep all the experiment data
 split_folder: 'data_split/'  # Where to store dataset splits
@@ -13,7 +13,7 @@ max_samples: null  # max training samples per class (null for no limit)
 train_batch_size: 200  # Batch size for every train iteration
 test_batch_size: 100  # Batch size for every test iteration
 sample_size: 13  # Window size for every sample/pixel input
-sample_bands: 30  # Number of bands after applying PCA
+sample_bands: 10  # Number of bands after applying PCA
 num_runs: 10  # The amount of time the whole experiment should run
 num_epochs: 50  # Number of epochs per run
 learning_rate: 0.01  # Initial learning rate
