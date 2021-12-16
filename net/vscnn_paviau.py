@@ -11,6 +11,30 @@ import torch
 from torch import nn
 
 
+class ResidualBlock(nn.Module):
+
+    def __init__(self, input_channels):
+        super(ResidualBlock, self).__init__()
+
+        # Shortcut parameters
+        self.batch_norm = nn.BatchNorm3d(input_channels)
+        self.relu = nn.ReLU()
+
+        # Block parameters
+        self.block = nn.Sequential(nn.Conv3d(input_channels, input_channels, (3, 3, 3), padding=1),
+                                   nn.BatchNorm3d(input_channels), self.relu,
+                                   nn.Conv3d(input_channels, input_channels, (3, 3, 3), padding=1),
+                                   nn.BatchNorm3d(input_channels), self.relu,
+                                   nn.Conv3d(input_channels, input_channels, (3, 3, 3), padding=1),
+                                   nn.BatchNorm3d(input_channels))
+
+    def forward(self, x):
+        out = self.block(x)
+        out += self.relu(self.batch_norm(x))
+
+        return out
+
+
 class VSCNN(nn.Module):
     def __init__(self, bands, num_classes):
         # image_patch: 10x13x13
