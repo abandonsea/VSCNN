@@ -46,6 +46,7 @@ def add_noise(img, noise_params):
     # Applies an additive gaussian noise to every pixel with mean and variance defined by noise_param
     # noise_param = sigma; normal = [mu, sigma]
     elif noise_type == 'additive_gaussian':
+        noise_amount *= max_value
         for idx in range(out.shape[2]):
             noise = np.random.normal(0.0, noise_amount, size=(img.shape[0], img.shape[1]))
             out[:, :, idx] += noise
