@@ -72,7 +72,9 @@ class HSIData:
         self.num_classes = int(len(self.label_values) - len(self.ignored_labels))
 
         img = np.asarray(img, dtype='float32')
-        self.image, _, _ = self.apply_dimension_reduction(img, num_bands)
+        self.raw_image = img
+        self.num_bands = num_bands
+        self.image, self.pca, self.sca = self.apply_dimension_reduction(img, num_bands)
 
     @staticmethod
     def apply_dimension_reduction(image, num_bands=10):
@@ -93,6 +95,19 @@ class HSIData:
         out_img = np.reshape(pca_img, (image_height, image_width, num_bands))
 
         return out_img, pca, sca1  # Returning transformers for future usage
+
+    # Similar to apply_dimension_reduction, but uses saved parameters to transform any external image
+    def apply_transforms(self, image):
+        image_height, image_width, image_bands = image.shape
+        flat_image = np.reshape(image, (image_height * image_width, image_bands))
+
+        # Normalize data and apply PCA
+        norm1_img = self.sca.transform(flat_image)
+        pca_img = self.pca.transform(norm1_img)
+
+        out_img = np.reshape(pca_img, (image_height, image_width, self.num_bands))
+
+        return out_img
 
     # Split ground-truth pixels into train, test, val
     def sample_dataset(self, train_size=0.8, val_size=0.1, max_train_samples=None):
