@@ -31,22 +31,6 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 CONFIG_FILE = ''  # Empty string to load default 'config.yaml'
 
 
-# def test(model, criterion, dataLoader):
-#     model.eval()
-#     evalLoss, correct = [], 0
-#     for neighbor_region, target in dataLoader:
-#         neighbor_region, target = neighbor_region.to(device), \
-#                                   target.to(device)
-#         neighbor_region = neighbor_region.permute((0, 3, 1, 2)).unsqueeze(1)
-#         logits = model(neighbor_region)
-#         loss = criterion(logits, target)
-#         evalLoss.append(loss.item())
-#         pred = torch.argmax(logits, dim=-1)
-#         correct += torch.sum(torch.eq(pred, target).int()).item()
-#     acc = float(correct) / len(dataLoader.dataset)
-#     return acc, np.mean(evalLoss)
-
-
 # Test DFFN runs
 def test():
     # Load config data from training
@@ -78,7 +62,7 @@ def test():
         # Load model
         model_file = f'{cfg.exec_folder}runs/vscnn_{test_best}model_run_{run}.pth'
         model = nn.DataParallel(VSCNN(cfg.sample_bands, num_classes))  # Values are going to be overwritten
-        model.load_state_dict(torch.load(model_file))
+        model.load_state_dict(torch.load(model_file, map_location=device))
         model.eval()
 
         # Set model to device
