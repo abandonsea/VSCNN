@@ -38,10 +38,3 @@ class VSCNN(nn.Module):
         out = out.view((batch_size, -1))
         out = self.classifier(out)
         return out
-
-
-# Indian_pine
-# net = VSCNN(30, 16)
-# input = torch.rand((2, 1, 30, 13, 13))
-# out = net(input)
-# print(out.shape)
