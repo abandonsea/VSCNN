@@ -299,3 +299,19 @@ def save_results(filename, report, run, epoch=-1, validation=False):
         file.write('\n')
         file.write('#' * 70)
         file.write('\n\n')
+
+
+def save_noise_results(path, noise, report):
+    noise_type = noise[0]
+    noise_amount = noise[1]
+    filename = f'{path}noise_{noise_type}.nst'
+
+    with open(filename, 'a') as file:
+        file.write(f'Results for amount: {noise_amount}\n')
+        file.write(f'\n- OVERALL ACCURACY: {report["overall_accuracy"]:f}\n')
+        file.write(f'\n- AVERAGE ACCURACY: {report["average_accuracy"]:f}\n')
+        file.write(f'\n- KAPPA COEFFICIENT: {report["kappa"]:f}\n')
+        file.write('\n\n')
+
+    torch_filename = f'{path}noise_{noise_type}_{noise_amount}.pth'
+    torch.save(report, torch_filename)
