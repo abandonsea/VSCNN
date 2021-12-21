@@ -24,18 +24,20 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 ########################
 # SET TEST CONFIG FILE #
 ########################
-CONFIG_FILE = 'experiments/server_01/config.yaml'  # Empty string to load default 'config.yaml'
-NOISES = [['salt_and_pepper', 0], ['salt_and_pepper', 0.005], ['salt_and_pepper', 0.01], ['salt_and_pepper', 0.05],
-          ['additive_gaussian', 0.01], ['additive_gaussian', 0.05], ['additive_gaussian', 0.1],
-          ['additive_gaussian', 0.2], ['additive_gaussian', 0.3],
-          ['multiplicative_gaussian', 0], ['multiplicative_gaussian', 0.1], ['multiplicative_gaussian', 0.3],
-          ['multiplicative_gaussian', 0.5], ['multiplicative_gaussian', 0.7]]
+PATH = 'experiments/'
+EXPERIMENTS = ['server_salinas_01']
+
+NOISES = [['salt_and_pepper', 0], ['salt_and_pepper', 0.001], ['salt_and_pepper', 0.005], ['salt_and_pepper', 0.01],
+          ['salt_and_pepper', 0.05],
+          ['additive_gaussian', 0.05], ['additive_gaussian', 0.1], ['additive_gaussian', 0.3],
+          ['additive_gaussian', 0.5], ['additive_gaussian', 1.0],
+          ['multiplicative_gaussian', 0.1], ['multiplicative_gaussian', 0.3], ['multiplicative_gaussian', 0.5],
+          ['multiplicative_gaussian', 1.0]]
 
 
 # Test SAE-3DDRN runs
-def test():
+def test(config_file):
     # Load config data from training
-    config_file = 'config.yaml' if not CONFIG_FILE else CONFIG_FILE
     cfg = VSCNNConfig(config_file, test=True)
 
     # Set string modifier if testing best models
@@ -78,7 +80,11 @@ def test():
 
 # Main for running test independently
 def main():
-    test()
+    # Load experiments
+    for experiment in EXPERIMENTS:
+        config_file = PATH + experiment + '/config.yaml'
+
+        test(config_file)
 
 
 if __name__ == '__main__':
