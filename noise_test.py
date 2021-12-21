@@ -74,8 +74,7 @@ def test(config_file):
 
             # Test model from the current run
             report = test_model(model, test_loader)
-            filename = cfg.results_folder + f'test_{noise[0]}.txt'
-            save_results(filename, report, run)
+            save_noise_results(cfg.results_folder, noise, report)
 
 
 # Main for running test independently
