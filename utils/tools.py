@@ -10,7 +10,7 @@ Created on Wed Sep 29 14:29 2021
 import torch
 import numpy as np
 from scipy import io
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.decomposition import PCA
 from sklearn import svm
 from tqdm import tqdm
@@ -95,6 +95,37 @@ class HSIData:
         out_img = np.reshape(pca_img, (image_height, image_width, num_bands))
 
         return out_img, pca, sca1  # Returning transformers for future usage
+
+    # Normalize data and return normalization object to enable using its inverse later on
+    @staticmethod
+    def normalize(image, normalization='minmax'):
+        image_height, image_width, image_bands = image.shape
+        flat_image = np.reshape(image, (image_height * image_width, image_bands))
+
+        if normalization == 'minmax':
+            sca = MinMaxScaler()
+            sca.fit(flat_image)
+        elif normalization == 'standard':
+            sca = StandardScaler()
+            sca.fit(flat_image)
+        else:
+            raise ValueError(f'{normalization} normalization not implemented.')
+
+        norm_img = sca.transform(flat_image)
+        out_img = np.reshape(norm_img, (image_height, image_width, image_bands))
+
+        return out_img, sca
+
+    # Undo normalization with normalization object from the normalize function
+    @staticmethod
+    def denormalize(image, scaler):
+        image_height, image_width, image_bands = image.shape
+        flat_image = np.reshape(image, (image_height * image_width, image_bands))
+
+        denorm_img = scaler.inverse_transform(flat_image)
+        out_img = np.reshape(denorm_img, (image_height, image_width, image_bands))
+
+        return out_img
 
     # Similar to apply_dimension_reduction, but uses saved parameters to transform any external image
     def apply_transforms(self, image):
