@@ -11,7 +11,8 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 import numpy as np
 
-from net.vscnn_paviau import VSCNN
+import net.vscnn_paviau as pavia
+import net.vscnn_indian_pines as indian
 from test import test_model
 from utils.config import VSCNNConfig
 from utils.dataset import VSCNNDataset
@@ -65,7 +66,11 @@ def test(config_file):
 
             # Load model
             model_file = f'{cfg.exec_folder}runs/vscnn_{test_best}model_run_{run}.pth'
-            model = nn.DataParallel(VSCNN(cfg.sample_bands, num_classes))  # Values are going to be overwritten
+            if cfg.dataset == 'IndianPines':
+                model = nn.DataParallel(indian.VSCNN(cfg.sample_bands, num_classes))
+            else:
+                model = nn.DataParallel(pavia.VSCNN(cfg.sample_bands, num_classes))
+
             model.load_state_dict(torch.load(model_file, map_location=device))
             model.eval()
 
