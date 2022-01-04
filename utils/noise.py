@@ -69,6 +69,8 @@ def add_noise(img, noise_params):
     elif noise_type == 'multiplicative_gaussian':
         out = np.multiply(out, np.random.normal(1.0, noise_amount, size=img.shape))
 
+    # Applies a multiplicative gaussian noise to every pixel except a chosen section of width == var [1, 8]
+    # noise_param = sigma; noise = normal(1.0, noise_param)
     elif noise_type == 'section_mul_gaussian':
         section = noise_amount
         var = SECTION_VARIANCE
