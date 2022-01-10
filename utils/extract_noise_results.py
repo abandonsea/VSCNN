@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import matplotlib.pyplot as plt
+
+# Set plot style
+plt.style.use('bmh')
 
 ############
 # Set file #
@@ -15,6 +19,7 @@ NOISE_TYPE = ['salt_and_pepper', 'additive_gaussian', 'multiplicative_gaussian',
               'section_mul_gaussian', 'single_section_gaussian']
 
 VALUE_POSITION = 3
+TEST_SIZE = 10
 
 
 # Get test results from text file
@@ -28,51 +33,81 @@ def get_values(filename):
             # Check for OA
             if 'amount' in line:
                 words = line.split(' ')
-                current_key = str(words[VALUE_POSITION])
+                # current_key = str(words[VALUE_POSITION])
+                current_key = ''.join(char for char in str(words[VALUE_POSITION]) if char != '\n')
+
                 if current_key not in results:
-                    results[current_key] = {'oa': [], 'aa': [], 'kappa': []}
+                    results[current_key] = {'oa': np.array([]), 'aa': np.array([]), 'kappa': np.array([])}
             elif 'OVERALL ACCURACY' in line:
                 words = line.split(' ')
-                results[current_key]['oa'].append(float(words[VALUE_POSITION]))
+                results[current_key]['oa'] = np.append(results[current_key]['oa'], float(words[VALUE_POSITION]))
             # Check for AA
             elif 'AVERAGE ACCURACY' in line:
                 words = line.split(' ')
-                results[current_key]['aa'].append(float(words[VALUE_POSITION]))
+                results[current_key]['aa'] = np.append(results[current_key]['aa'], float(words[VALUE_POSITION]))
             # Check for kappa
             elif 'KAPPA COEFFICIENT' in line:
                 words = line.split(' ')
-                results[current_key]['kappa'].append(float(words[VALUE_POSITION]))
+                results[current_key]['kappa'] = np.append(results[current_key]['kappa'], float(words[VALUE_POSITION]))
 
             # Get next line
             line = file.readline()
 
     for key in results:
-        assert len(results[key]['oa']) == len(results[key]['kappa']), 'Wrong list lengths! [1]'
-        assert len(results[key]['aa']) == len(results[key]['kappa']), 'Wrong list lengths! [2]'
+        assert results[key]['oa'].size == results[key]['kappa'].size, 'Wrong list lengths! [1]'
+        assert results[key]['aa'].size == results[key]['kappa'].size, 'Wrong list lengths! [2]'
+
+        for noise in results[key]:
+            if results[key][noise].size > TEST_SIZE:
+                results[key][noise] = results[key][noise][:TEST_SIZE]
+            elif results[key][noise].size < TEST_SIZE:
+                raise AssertionError
 
     return results
 
 
 # Main for running script independently
 def main():
-    for data in DATASETS:
-        for net in NETWORKS:
-            for case in TEST_CASES:
-                for noise in NOISE_TYPE:
+    for data in DATASETS:  # Run for 3 datasets
+        for case in TEST_CASES:  # Run for 4 test cases
+            zero_noise = {}
+            for noise in NOISE_TYPE:  # Run for 5 noise types
+                nodes = {}
+                for net in NETWORKS:  # All network's results will be in the same graphic
                     file = 'noise_' + noise + '.nst'
                     path = PATH + net + '/' + data + '/' + case + '/'
                     filename = path + file
-                    result = get_values(filename)
 
-                    # print(f'TEST: {net} with {data}')
-                    # print('#' * 15)
-                    # print(f'OA: {oa.mean():.6f} (+- {oa.std():.6f})')
-                    # print(f'AA: {aa.mean():.6f} (+- {aa.std():.6f})')
-                    # print(f'Kappa: {kappa.mean():.6f} (+- {kappa.std():.6f})')
-                    # print('-' * 15)
-                    # print(f'Max OA: {np.max(oa):.5f}')
-                    # print(f'Min OA: {np.min(oa):.5f}')
-                    # print('')
+                    results = get_values(filename)
+
+                    nodes[net] = [(noise, results[noise]['oa'].mean()) for noise in results]
+
+                    if noise == 'salt_and_pepper':
+                        zero_noise[net] = nodes[net][0]
+                    else:
+                        nodes[net].insert(0, zero_noise[net])
+
+                # Plot graphs for the simple noise types
+                simple_noise_types = ['salt_and_pepper', 'additive_gaussian', 'multiplicative_gaussian']
+                if noise in simple_noise_types:
+                    # Generate graph for the current values
+                    labels, values = zip(*nodes['sdmm'])
+                    fig, ax = plt.subplots()
+                    fig.suptitle(f'Using {noise} noise')
+
+                    for key in nodes:
+                        labels, values = zip(*nodes[key])
+                        ax.plot(labels, values, linewidth=2.0, label=f'{key} network')
+
+                    ax.set(xlim=(0, 4), xticks=np.arange(0, 5),
+                           ylim=(0.5, 1.1), yticks=np.arange(0.0, 1.1, 0.2))
+                    ax.legend()
+                    plt.show()
+                    b = 2
+
+                # TODO: Plot graphs for the section noise types
+                else:
+                    a = 2
 
 
 if __name__ == '__main__':
