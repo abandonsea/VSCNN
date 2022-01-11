@@ -91,19 +91,24 @@ def main():
                 simple_noise_types = ['salt_and_pepper', 'additive_gaussian', 'multiplicative_gaussian']
                 if noise in simple_noise_types:
                     # Generate graph for the current values
-                    labels, values = zip(*nodes['sdmm'])
                     fig, ax = plt.subplots()
                     fig.suptitle(f'Using {noise} noise')
 
+                    size = 0
                     for key in nodes:
                         labels, values = zip(*nodes[key])
+                        labels = [f'{str(100 * float(label))}%' for label in labels]
+                        size = len(labels)
+
                         ax.plot(labels, values, linewidth=2.0, label=f'{key} network')
 
-                    ax.set(xlim=(0, 4), xticks=np.arange(0, 5),
-                           ylim=(0.5, 1.1), yticks=np.arange(0.0, 1.1, 0.2))
+                    ax.set(xlim=(0, size-1), xticks=np.arange(0, size),
+                           ylim=(0.0, 1.1), yticks=np.arange(0.2, 1.1, 0.2))
+                    ax.set(xlabel='Amount of noise', ylabel='Average accuracy',
+                           title=f'Subplot title')
                     ax.legend()
-                    plt.show()
-                    b = 2
+                    # plt.show()
+                    plt.savefig(f'{PATH}{data}_{case}_{noise}.png')
 
                 # TODO: Plot graphs for the section noise types
                 else:
